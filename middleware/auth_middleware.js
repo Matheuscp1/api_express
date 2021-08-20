@@ -9,7 +9,7 @@ module.exports = {
                 if (token[1]) {
                     jwt.verify(token[1], 'testeJWT', (err, data) => {
                         if (err) {
-                            res.json({ error: 'Token inválido' }).status(401)
+                            res.status(401).json({ error: 'Token inválido' })
                         } else {
                             req.loggedUser = {
                                 email: data.email,
@@ -19,11 +19,11 @@ module.exports = {
                         }
                     })
                 } else {
-                    res.json({ error: "Token vazio" }).status(401)
+                    res.status(401).json({ error: "Token vazio" })
                 }
 
             } else {
-                res.json({ error: 'Sem cabeçalho de token' }).status(401)
+                res.status(401).json({ error: 'Sem cabeçalho de token' })
             }
         }
 }

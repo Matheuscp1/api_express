@@ -23,15 +23,15 @@ route.get('/user/:id?', authMiddleware.auth, (req, res) => {
     id = req.params.id
     if (id) {
         if (isNaN(id)) {
-            res.json({ error: 'Não é um número ' + id }).status(400)
+            res.status(400).json({ error: 'Não é um número ' + id })
         } else {
             id = parseInt(id)
             UserModel.findByPk(id, { raw: true }).then(user => {
-                delete user.password
                 if (user) {
-                    res.json(user)
+                    delete user.password
+                    res.status(200).json(user)
                 } else {
-                    res.json({ error: "Usuário não encontrado" })
+                    res.status(404).json({ error: "Usuário não encontrado" })
                 }
             })
         }
@@ -45,8 +45,7 @@ route.get('/user/:id?', authMiddleware.auth, (req, res) => {
             users.forEach(user => {
                 delete user.password
             })
-            console.log(users)
-            res.json(users)
+            res.status(200).json(users)
         })
     }
 
@@ -61,7 +60,7 @@ route.post('/upload', authMiddleware.auth, upload.array('img'), (req, res) => {
         files.size.push(file.size)
         files.name.push(file.originalname)
     }
-    res.json(files)
+    res.status(200).json(files)
 })
 
 
@@ -73,12 +72,10 @@ route.post('/user', (req, res) => {
         email, nick_name, name, password: hash
     }).then(() => {
         console.log('criado com sucesso')
-        res.status(201)
-        res.json(req.body)
+        res.status(201).json(req.body)
     }).catch(e => {
         console.log(e.message)
-        res.status(404)
-            .json({ error: e.errors.map(err => err.message) })
+        res.status(404).json({ error: e.errors.map(err => err.message) })
     })
 })
 
@@ -90,8 +87,7 @@ route.post('/auth', (req, res) => {
         }
     }).then(user => {
         if (!user) {
-            res.status(404)
-            res.json({ error: 'usuario não encontrado' })
+            res.status(404).json({ error: 'usuario não encontrado' })
         } else {
             let compare = bcrypt.compareSync(password, user.password)
             if (compare) {
@@ -108,8 +104,7 @@ route.post('/auth', (req, res) => {
             }
         }
     }).catch(e => {
-        console.log(e.message)
-        res.json({ error: e.errors.map(err => err.message) }).status(400)
+        res.status(400).json({ error: e.errors.map(err => err.message) })
     })
 })
 
@@ -131,19 +126,19 @@ route.put('/user/:id', authMiddleware.auth, (req, res) => {
             })
         }
     } else {
-        res.json({ error: 'Id é obrigatorio' }).status(400)
+        res.status(400).json({ error: 'Id é obrigatorio' })
     }
 })
 
 route.delete('/user/:id', authMiddleware.auth, (req, res) => {
     id = req.params.id
     if (isNaN(id)) {
-        res.json({ error: 'Isso não é um numero' + id }).status(400)
+        res.status(400).json({ error: 'Isso não é um numero' + id })
     } else {
         id = parseInt(id)
         UserModel.findByPk(id).then(user => {
             if (!user) {
-                res.json({ error: 'Usuário não encontrado ' + id }).status(404)
+                res.status(404).json({ error: 'Usuário não encontrado ' + id })
             } else {
                 res.send('Usuário  encontrado ' + id).status(200)
                 UserModel.destroy(
@@ -155,8 +150,7 @@ route.delete('/user/:id', authMiddleware.auth, (req, res) => {
                 )
             }
         }).catch(e => {
-            console.log(e.message)
-                .json({ error: e.message }).status(404)
+            res.status(404).json({ error: e.message })
         })
 
     }
