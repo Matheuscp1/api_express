@@ -112,7 +112,7 @@ route.put('/user/:id', authMiddleware.auth, (req, res) => {
     id = req.params.id
     if (id) {
         if (isNaN(id)) {
-            res.send('Isso não é um numero' + id).status(400)
+            res.status(400).send('Isso não é um numero' + id)
         } else {
             id = parseInt(id)
             UserModel.update(
