@@ -52,8 +52,7 @@ route.get('/user/:id?', authMiddleware.auth, (req, res) => {
 
 })
 
-
-route.post('/upload', upload.array('img'), (req, res) => {
+route.post('/upload', authMiddleware.auth, upload.array('img'), (req, res) => {
     let files = {
         size: [],
         name: []
@@ -114,7 +113,7 @@ route.post('/auth', (req, res) => {
     })
 })
 
-route.put('/user/:id', (req, res) => {
+route.put('/user/:id', authMiddleware.auth, (req, res) => {
     id = req.params.id
     if (id) {
         if (isNaN(id)) {
@@ -136,7 +135,7 @@ route.put('/user/:id', (req, res) => {
     }
 })
 
-route.delete('/user/:id', (req, res) => {
+route.delete('/user/:id', authMiddleware.auth, (req, res) => {
     id = req.params.id
     if (isNaN(id)) {
         res.json({ error: 'Isso não é um numero' + id }).status(400)
